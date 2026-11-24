@@ -46,7 +46,7 @@ ARG MODEL_REVISION=v1.5.0
 RUN python -c "from huggingface_hub import snapshot_download; \
 snapshot_download('$MODEL_REPO', revision='$MODEL_REVISION', \
 local_dir='/app/models/rizzo-pii-0.3B-v1.5.0', \
-allow_patterns=['*.json','*.safetensors','*.txt','*.model'])"
+allow_patterns=['*.json','*.safetensors','*.txt','*.model','onnx/*'])"
 
 # --- modelli OCR (scansioni e immagini) ---------------------------------------
 # PaddleOCR in ONNX: det/rec/tabelle ufficiali PaddlePaddle + layout (vedi lo script).

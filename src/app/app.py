@@ -148,8 +148,10 @@ OVERLAP = 20         # parole di sovrapposizione tra chunk consecutivi
 _backend = os.environ.get("PII_BACKEND", "auto").strip().lower()
 _onnx_path = find_onnx(MODEL_DIR)
 if _backend == "onnx" or (_backend != "torch" and _onnx_path):
-    print(f"Carico il modello ONNX da {_onnx_path or MODEL_DIR} (CPU)...")
-    nlp = OnnxTokenClassifier(MODEL_DIR, onnx_path=_onnx_path)
+    # onnxruntime dimensiona il pool sui core del nodo, non sul limite CPU del container
+    _onnx_threads = os.environ.get("PII_ONNX_THREADS")
+    print(f"Carico il modello ONNX da {_onnx_path or MODEL_DIR} (CPU, thread: {_onnx_threads or 'auto'})...")
+    nlp = OnnxTokenClassifier(MODEL_DIR, onnx_path=_onnx_path, intra_op_threads=_onnx_threads)
     MODEL_BACKEND, MODEL_DEVICE = "onnx", "cpu"
 else:
     import torch
