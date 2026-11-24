@@ -6,6 +6,7 @@
 # tutto, poi si riammette a mano il minimo indispensabile
 *
 !src/app/
+!scripts/fetch_ocr_models.py
 
 # roba pesante o rigenerabile che NON deve rientrare nemmeno via src/app/
 **/__pycache__/
