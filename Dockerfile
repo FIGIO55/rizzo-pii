@@ -52,7 +52,7 @@ allow_patterns=['*.json','*.safetensors','*.txt','*.model','onnx/*'])"
 # PaddleOCR in ONNX: det/rec/tabelle ufficiali PaddlePaddle + layout (vedi lo script).
 # ocr.py li cerca in /app/models/ocr (root della repo + models/ocr).
 COPY scripts/fetch_ocr_models.py /tmp/fetch_ocr_models.py
-RUN python /tmp/fetch_ocr_models.py --dest /app/models/ocr && rm /tmp/fetch_ocr_models.py
+RUN python /tmp/fetch_ocr_models.py --dest /app/models/ocr && rm -rf /tmp/fetch_ocr_models.py /root/.cache/huggingface
 
 # --- applicazione ------------------------------------------------------------
 # Solo src/app: il resto della repo (training, data pipeline, dataset) non serve
@@ -62,7 +62,9 @@ COPY src/app/ /app/src/app/
 
 # utente non-root; la home deve essere scrivibile perche' server_config scrive
 # config.json/prefs.json in ~/.local/share/rizzo-pii (preferenze dell'UI).
-RUN useradd --create-home --uid 10001 app && chown -R app:app /app
+# /app resta di root in sola lettura: l'app non ci scrive e un chown -R
+# ricopierebbe tutti i modelli in un nuovo layer.
+RUN useradd --create-home --uid 10001 app
 USER app
 ENV HOME=/home/app
 
